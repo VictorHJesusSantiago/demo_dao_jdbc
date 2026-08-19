@@ -1,1122 +1,949 @@
 <div align="center">
 
-<img src="https://cdn-icons-png.flaticon.com/512/4299/4299956.png" alt="DAO JDBC Logo" width="110" />
+**🌐 Choose Language / Selecione o Idioma / Elija el Idioma**
 
-# 🗃️ Demo DAO JDBC — DAO Pattern with Java + MySQL
-
-**Complete implementation of the DAO (Data Access Object) design pattern in Java,**
-**using JDBC for direct communication with a MySQL database.**
-
-<br>
-
-[![English](https://img.shields.io/badge/🇺🇸_English-CURRENT-success?style=for-the-badge)](README.md)
-[![Português](https://img.shields.io/badge/🇧🇷_Português-README__PT.md-blue?style=for-the-badge)](README_PT.md)
-[![Español](https://img.shields.io/badge/🇪🇸_Español-README__ES.md-orange?style=for-the-badge)](README_ES.md)
-
-<br>
-
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![JDBC](https://img.shields.io/badge/JDBC-Native%20Connection-007396?style=for-the-badge&logo=java&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![DAO Pattern](https://img.shields.io/badge/Pattern-DAO-8B0000?style=for-the-badge)
-![OOP](https://img.shields.io/badge/Paradigm-OOP-blueviolet?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Complete-brightgreen?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+[![🇺🇸 English](https://img.shields.io/badge/🇺🇸%20English-Current-005CA5?style=for-the-badge)](README.md)&nbsp;&nbsp;&nbsp;[![🇧🇷 Português](https://img.shields.io/badge/🇧🇷%20Português-README__PT.md-009C3B?style=for-the-badge)](README_PT.md)&nbsp;&nbsp;&nbsp;[![🇪🇸 Español](https://img.shields.io/badge/🇪🇸%20Español-README__ES.md-C60B1E?style=for-the-badge)](README_ES.md)
 
 </div>
 
 ---
 
-## 📚 Table of Contents
-
-> Quickly navigate the project sections.
-
-| # | Section |
-|:-:|:------|
-| 1 | [📖 About the Project](#-about-the-project) |
-| 2 | [🏛️ The DAO Pattern](#️-the-dao-pattern) |
-| 3 | [✨ Features (CRUD)](#-features-crud) |
-| 4 | [🛠️ Tech Stack](#️-tech-stack) |
-| 5 | [📦 Architecture & Packages](#-architecture--packages) |
-| 6 | [🗃️ Database](#️-database) |
-| 7 | [📂 Project Structure](#-project-structure) |
-| 8 | [🚀 How to Run](#-how-to-run) |
-| 9 | [📋 Requirements & Software Engineering Docs](#-requirements--software-engineering-docs) |
-| 10 | [🗺️ Roadmap](#️-roadmap) |
-| 11 | [🤝 Contributing](#-contributing) |
-| 12 | [👨‍💻 Author](#-author) |
-| 13 | [📄 License](#-license) |
-
----
-
-## 📖 About the Project
-
-> **Demo DAO JDBC** is a practical, complete implementation of the **DAO (Data Access Object)** design pattern in plain Java, using **JDBC** to interact directly with a **MySQL** database — without ORMs such as Hibernate or JPA.
-
-The project consists of a **Seller** and **Department** management system, demonstrating how to organize the data persistence layer in a clean, decoupled, and reusable way, fully separating data access from business logic.
-
----
-
-## 🏛️ The DAO Pattern
-
-> The **Data Access Object (DAO)** is a structural design pattern that isolates the data access layer from the rest of the application, allowing business logic to be independent of the underlying database.
+<div align="center">
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   APPLICATION LAYER                  │
-│           Program.java / Demo Classes                │
-└──────────────────────┬──────────────────────────────┘
-                        │ uses
-┌───────────────────────▼──────────────────────────────┐
-│                  DAO INTERFACES                       │
-│         SellerDao          DepartmentDao              │
-└──────────┬────────────────────────┬──────────────────┘
-           │ implements             │ implements
-┌──────────▼──────────┐  ┌──────────▼──────────────────┐
-│  SellerDaoJDBC       │  │  DepartmentDaoJDBC          │
-│  (SQL + ResultSet)   │  │  (SQL + ResultSet)          │
-└──────────┬───────────┘  └──────────┬──────────────────┘
-           │                         │
-┌──────────▼─────────────────────────▼──────────────────┐
-│                 DB (Utility Class)                     │
-│         Manages Connection, PreparedStatement          │
-└─────────────────────────┬───────────────────────────────┘
-                           │
-┌──────────────────────────▼─────────────────────────────┐
-│               MySQL Database                            │
-│         coursejdbc · seller · department                │
-└──────────────────────────────────────────────────────────┘
-```
-
-### 🔑 Benefits of the DAO Pattern
-
-| Benefit | Description |
-|:----------|:----------|
-| 🧩 **Decoupling** | Business logic has no knowledge of SQL or JDBC details. |
-| 🔄 **Replaceability** | Swapping MySQL for PostgreSQL only requires changing the DAO implementation. |
-| 🧪 **Testability** | DAO interfaces allow mocking database dependencies in tests. |
-| 📐 **Single Responsibility** | Each class has one clear, well-defined role. |
-
----
-
-## ✨ Features (CRUD)
-
-### 👤 Seller
-
-| Operation | Method | Description |
-|:---------|:------:|:----------|
-| 🔍 **Find by ID** | `findById(Integer id)` | Returns a seller by its unique identifier. |
-| 📋 **Find All** | `findAll()` | Returns the complete list of sellers. |
-| 🏢 **Find by Department** | `findByDepartment(Department dep)` | Returns all sellers belonging to a given department. |
-| ➕ **Insert** | `insert(Seller obj)` | Registers a new seller in the database. |
-| ✏️ **Update** | `update(Seller obj)` | Updates an existing seller's data. |
-| 🗑️ **Delete** | `deleteById(Integer id)` | Removes a seller by its ID. |
-
-### 🏢 Department
-
-| Operation | Method | Description |
-|:---------|:------:|:----------|
-| 🔍 **Find by ID** | `findById(Integer id)` | Returns a department by its identifier. |
-| 📋 **Find All** | `findAll()` | Returns the complete list of departments. |
-| ➕ **Insert** | `insert(Department obj)` | Registers a new department. |
-| ✏️ **Update** | `update(Department obj)` | Updates a department's data. |
-| 🗑️ **Delete** | `deleteById(Integer id)` | Removes a department by its ID. |
-
----
-
-## 🛠️ Tech Stack
-
-| Technology | Role in the Project |
-|:-----------|:------------------|
-| **Java** | Main language — all business logic and design patterns. |
-| **JDBC** | Java API for native communication with MySQL (no ORM). |
-| **MySQL** | Relational database for persisting Seller and Department data. |
-| **MySQL Connector/J** | JDBC driver that establishes the Java ↔ MySQL connection. |
-| **Eclipse IDE** | IDE used for development (`.classpath` and `.project` files included). |
-
----
-
-## 📦 Architecture & Packages
-
-> The project follows a package organization with a clear separation of responsibilities.
-
-| Package | Class | Responsibility |
-|:-------|:------:|:-----------------|
-| `model.entities` | `Seller.java` | Seller entity: name, email, salary, birth date, and department. |
-| `model.entities` | `Department.java` | Department entity: id and name. |
-| `model.dao` | `SellerDao.java` | **Interface** defining the CRUD contract for sellers. |
-| `model.dao` | `DepartmentDao.java` | **Interface** defining the CRUD contract for departments. |
-| `model.dao.impl` | `SellerDaoJDBC.java` | Concrete **implementation** of `SellerDao` using JDBC and SQL. |
-| `model.dao.impl` | `DepartmentDaoJDBC.java` | Concrete **implementation** of `DepartmentDao` using JDBC and SQL. |
-| `db` | `DB.java` | Utility class to open/close `Connection`, `Statement`, and `ResultSet`. |
-| `db` | `DbException.java` | Custom runtime exception for database errors. |
-| `db` | `DbIntegrityException.java` | Exception for referential integrity violations (FK constraints). |
-| `application` | `DaoFactory.java` | **Factory** that instantiates DAOs — decouples creation from implementations. |
-| `application` | `Program.java` | Demo class showcasing every CRUD operation. |
-
----
-
-## 🗃️ Database
-
-### ⚙️ Configuration — `db.properties`
-
-```properties
-# ─────────────────────────────────────────
-# MySQL Connection Configuration
-# ─────────────────────────────────────────
-dburl=jdbc:mysql://localhost:3306/coursejdbc
-user=your_user
-password=your_password
-useSSL=false
-```
-
-> ⚠️ **Never** commit `db.properties` with real credentials. Add it to `.gitignore` in production projects.
-
----
-
-### 📄 SQL Script — `database.sql`
-
-```sql
--- ─────────────────────────────────────────
--- Database Creation
--- ─────────────────────────────────────────
-CREATE DATABASE IF NOT EXISTS coursejdbc;
-USE coursejdbc;
-
--- ─────────────────────────────────────────
--- Table: Department
--- ─────────────────────────────────────────
-CREATE TABLE department (
-    Id   INT         NOT NULL AUTO_INCREMENT,
-    Name VARCHAR(60) NULL,
-    PRIMARY KEY (Id)
-);
-
--- ─────────────────────────────────────────
--- Table: Seller (references Department)
--- ─────────────────────────────────────────
-CREATE TABLE seller (
-    Id           INT          NOT NULL AUTO_INCREMENT,
-    Name         VARCHAR(60)  NOT NULL,
-    Email        VARCHAR(100) NOT NULL,
-    BirthDate    DATETIME     NOT NULL,
-    BaseSalary   DOUBLE       NOT NULL,
-    DepartmentId INT          NOT NULL,
-    PRIMARY KEY (Id),
-    FOREIGN KEY (DepartmentId) REFERENCES department (Id)
-);
-
--- ─────────────────────────────────────────
--- Sample Data
--- ─────────────────────────────────────────
-INSERT INTO department (Name) VALUES
-    ('Computers'), ('Electronics'), ('Fashion'), ('Books');
-
-INSERT INTO seller (Name, Email, BirthDate, BaseSalary, DepartmentId) VALUES
-    ('Bob Brown',   'bob@gmail.com',   '1998-04-21 00:00:00', 1000.0, 1),
-    ('Maria Pink',  'maria@gmail.com', '1979-10-31 00:00:00', 3500.0, 1),
-    ('Alex Grey',   'alex@gmail.com',  '1988-01-15 00:00:00', 2200.0, 2),
-    ('Ana Lima',    'ana@gmail.com',   '1995-09-13 00:00:00', 1700.5, 4),
-    ('John White',  'john@gmail.com',  '1991-11-21 00:00:00', 3000.0, 4);
-```
-
-### 📊 Entity Relationship
-
-```
-┌──────────────────┐         ┌─────────────────────────────┐
-│    department     │         │           seller             │
-│───────────────────│         │───────────────────────────────│
-│ Id          PK    │◄────────│ DepartmentId       FK         │
-│ Name              │  1   N  │ Id                 PK         │
-└────────────────────┘         │ Name                          │
-                               │ Email                         │
-                               │ BirthDate                     │
-                               │ BaseSalary                    │
-                               └─────────────────────────────────┘
+██████╗ ███████╗███╗   ███╗ ██████╗
+██╔══██╗██╔════╝████╗ ████║██╔═══██╗
+██║  ██║█████╗  ██╔████╔██║██║   ██║
+██║  ██║██╔══╝  ██║╚██╔╝██║██║   ██║
+██████╔╝███████╗██║ ╚═╝ ██║╚██████╔╝
+╚═════╝ ╚══════╝╚═╝     ╚═╝ ╚═════╝
+     DAO_JDBC — Plain JDBC Data Access Object Pattern in Java
 ```
 
 ---
 
-## 📂 Project Structure
+[![Java](https://img.shields.io/badge/Java-10+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![JDBC](https://img.shields.io/badge/JDBC-java.sql-4479A1?style=for-the-badge&logo=java&logoColor=white)](https://docs.oracle.com/javase/tutorial/jdbc/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.3.0%20Connector-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://dev.mysql.com/downloads/connector/j/)
+[![Eclipse](https://img.shields.io/badge/IDE-Eclipse-2C2255?style=for-the-badge&logo=eclipseide&logoColor=white)](https://www.eclipse.org/)
+[![License](https://img.shields.io/badge/License-Educational-8B5CF6?style=for-the-badge)]()
+[![Status](https://img.shields.io/badge/Status-Reference%20Demo-10B981?style=for-the-badge)]()
 
-```plaintext
+<br/>
+
+> **A minimal, framework-free Java program demonstrating the DAO (Data Access Object) pattern**
+> over plain JDBC against a MySQL database, without an ORM in the way.
+
+<br/>
+
+![Entities](https://img.shields.io/badge/Domain%20Entities-2-3DDC84?style=flat-square)
+![DAO Interfaces](https://img.shields.io/badge/DAO%20Interfaces-2-005CA5?style=flat-square)
+![DAO Implementations](https://img.shields.io/badge/DAO%20Implementations-1-FF6B35?style=flat-square)
+![Source Files](https://img.shields.io/badge/Java%20Source%20Files-9-8B5CF6?style=flat-square)
+
+</div>
+
+---
+
+## 📑 Table of Contents
+
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+<table>
+<tr>
+<td valign="top" width="50%">
+
+**🏗️ System**
+- [Overview](#-overview)
+- [System Architecture](#-system-architecture)
+- [Technology Stack](#-technology-stack)
+- [Design Patterns](#-design-patterns-applied)
+- [Project Structure](#-project-structure)
+
+**📦 Modules**
+- [Program — Entry Point](#-program--entry-point)
+- [DB — Connection Manager](#-db--connection-manager)
+- [DaoFactory](#-daofactory)
+- [SellerDao / SellerDaoJDBC](#-sellerdao--sellerdaojdbc)
+- [DepartmentDao](#-departmentdao)
+- [Domain Entities](#-domain-entities)
+- [Exceptions](#-exceptions)
+
+</td>
+<td valign="top" width="50%">
+
+**💼 Business**
+- [Business Rules](#-business-rules)
+- [Functional Requirements](#-functional-requirements)
+- [Non-Functional Requirements](#-non-functional-requirements)
+
+**📐 Design**
+- [Data Model](#-data-model)
+- [System Flows](#-system-flows)
+
+**🔐 Security & Ops**
+- [Security](#-security)
+- [Installation & Execution](#-installation--execution)
+- [Automated Tests](#-automated-tests)
+- [Metrics & Monitoring](#-metrics--monitoring)
+- [Known Limitations](#-known-limitations)
+
+</td>
+</tr>
+</table>
+
+---
+
+</details>
+
+## 🌟 Overview
+
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+**demo_dao_jdbc** is a compact, single-purpose Java program built to demonstrate the **DAO (Data Access Object)** design pattern implemented directly against **plain JDBC** (`java.sql`), with no ORM, no framework, and no dependency-injection container in between. It models a classic "sales department" domain: a `Department` has many `Seller`s, and the program exercises the full CRUD lifecycle for sellers against a MySQL database named `coursejdbc`.
+
+The project is deliberately small: nine Java source files under `src/`, a single `Program.java` entry point that runs a scripted sequence of operations (`findById`, `findByDepartment`, `findAll`, `insert`, `update`, `deleteById`) against the `SellerDaoJDBC` implementation, and a `db.properties` file holding the JDBC connection URL and credentials, loaded at runtime rather than hardcoded.
+
+Its purpose is educational: it shows how to hand-write a JDBC connection singleton (`DB`), how a `DaoFactory` decouples callers from concrete implementations, how `PreparedStatement` prevents SQL injection while still allowing `Statement.RETURN_GENERATED_KEYS` for auto-increment retrieval, and how JDBC resources (`Connection`, `Statement`, `ResultSet`) must be defensively closed in `finally` blocks. There is a related but entirely separate project, `CoopVale/`, living in a subdirectory of this repository; it is a full Flask-based credit-union system with its own three-language README set and is not part of this DAO demo.
+
+### 🎯 System Objectives
+
+| Objective | Description |
+|-----------|-------------|
+| 🧱 **Demonstrate the DAO Pattern** | Separate persistence logic (`SellerDaoJDBC`) from domain entities (`Seller`, `Department`) and from the caller (`Program`) |
+| 🔌 **Plain JDBC, No ORM** | Use `java.sql.*` directly to show what an ORM like Hibernate normally hides |
+| 🏭 **Factory-Based Wiring** | `DaoFactory.createSellerDao()` centralizes how a `SellerDaoJDBC` is constructed and wired to a `Connection` |
+| 🔐 **Injection-Safe Queries** | Every SQL statement uses `PreparedStatement` with `?` placeholders, never string concatenation |
+| 🆔 **Auto-Generated Key Retrieval** | `insert()` uses `Statement.RETURN_GENERATED_KEYS` to read back the new `Seller` id |
+| 🗺️ **N+1 Avoidance via Caching Map** | `findAll()` and `findByDepartment()` cache already-instantiated `Department` objects in a `Map<Integer, Department>` to avoid duplicate objects for the same join row |
+| ♻️ **Deterministic Resource Cleanup** | `DB.closeStatement()` / `DB.closeResultSet()` / `DB.closeConnection()` are called from `finally` blocks around every operation |
+| 📚 **Runnable Teaching Script** | `Program.main` reads as a narrated script (`TEST 1`… `TEST 6`) rather than a test suite, intended to be read top to bottom |
+
+---
+
+</details>
+
+## 🏗️ System Architecture
+
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+### Module Diagram
+
+```mermaid
+flowchart TB
+    subgraph APP["🚀  APPLICATION LAYER"]
+        PROG["Program.java\n─────────────────\nmain() — scripted\nCRUD walkthrough"]
+    end
+
+    subgraph FACTORY["🏭  FACTORY"]
+        DAOF["DaoFactory\n─────────────\ncreateSellerDao()"]
+    end
+
+    subgraph DAO["📦  DAO LAYER"]
+        direction TB
+        SDAO["SellerDao\n(interface)\n─────────────\ninsert · update\ndeleteById · findById\nfindAll · findByDepartment"]
+        DDAO["DepartmentDao\n(interface)\n─────────────\ninsert · update\ndeleteById · findById\nfindAll"]
+        SIMPL["SellerDaoJDBC\n(implementation)\n─────────────\nPreparedStatement-based\nCRUD over 'seller' table"]
+        SDAO -.->|"implemented by"| SIMPL
+    end
+
+    subgraph MODEL["🧬  DOMAIN MODEL"]
+        direction LR
+        SELLER["Seller\n─────────────\nid, name, email\nbirthDate, baseSalary\ndepartment"]
+        DEPT["Department\n─────────────\nid, name"]
+        SELLER -->|"belongs to"| DEPT
+    end
+
+    subgraph DB["🗄️  CONNECTION LAYER"]
+        DBCONN["DB\n─────────────\ngetConnection()\nloadProperties()\ncloseConnection/Statement/ResultSet"]
+        PROPS["db.properties\n─────────────\nuser · password\ndburl · useSSL"]
+        DBCONN -->|"reads"| PROPS
+    end
+
+    subgraph EXC["⚠️  EXCEPTIONS"]
+        DBEX["DbException\n(RuntimeException)"]
+        DBIEX["DbIntegrityException\n(RuntimeException)"]
+    end
+
+    subgraph SYS["🐬  DATABASE"]
+        MYSQL[("MySQL\ncoursejdbc\nseller · department tables")]
+    end
+
+    PROG --> DAOF --> SIMPL
+    SIMPL --> SELLER
+    SIMPL --> DEPT
+    SIMPL --> DBCONN
+    SIMPL -.->|"throws"| DBEX
+    DBCONN -.->|"throws"| DBEX
+    DBCONN --> MYSQL
+
+    style APP fill:#1e3a5f,color:#fff,stroke:#4a90d9
+    style FACTORY fill:#1a3a1a,color:#fff,stroke:#4caf50
+    style DAO fill:#3a1a1a,color:#fff,stroke:#e57373
+    style MODEL fill:#3a2a1a,color:#fff,stroke:#ffb74d
+    style DB fill:#2a1a3a,color:#fff,stroke:#ce93d8
+    style EXC fill:#3a1a1a,color:#fff,stroke:#e57373
+    style SYS fill:#1a3a1a,color:#fff,stroke:#4caf50
+```
+
+### Architecture Layers
+
+```mermaid
+flowchart LR
+    subgraph L1["🚀 Application"]
+        A1["Program.main"]
+    end
+    subgraph L2["🏭 Wiring"]
+        B1["DaoFactory"]
+    end
+    subgraph L3["📦 Persistence"]
+        C1["SellerDaoJDBC\nPreparedStatement"]
+    end
+    subgraph L4["🗄️ Connectivity"]
+        D1["DB / db.properties\nDriverManager"]
+    end
+
+    L1 --> L2 --> L3 --> L4
+
+    style L1 fill:#1565C0,color:#fff
+    style L2 fill:#2E7D32,color:#fff
+    style L3 fill:#6A1B9A,color:#fff
+    style L4 fill:#BF360C,color:#fff
+```
+
+---
+
+</details>
+
+## 🛠️ Technology Stack
+
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="2"><strong>🧠 Language / Runtime</strong></td>
+<td>Java</td>
+<td>module-info targets JavaSE-10; Eclipse `.classpath` uses the default JRE container</td>
+<td>Application source language, compiled as a Java module (`module demo_dao_jdbc`)</td>
+</tr>
+<tr>
+<td>Java Platform Module System</td>
+<td>`module-info.java`</td>
+<td>Declares `requires java.sql;` — the only module dependency</td>
+</tr>
+<tr>
+<td rowspan="2"><strong>🔌 Data Access</strong></td>
+<td>JDBC (`java.sql`)</td>
+<td>Standard library</td>
+<td>`Connection`, `PreparedStatement`, `ResultSet`, `DriverManager`, `Statement`</td>
+</tr>
+<tr>
+<td>MySQL Connector/J</td>
+<td>8.3.0 (per `.classpath`); `classpath.txt` shows an older `MySQLConnector` user library entry</td>
+<td>JDBC driver used to reach the MySQL server</td>
+</tr>
+<tr>
+<td><strong>🗄️ Database</strong></td>
+<td>MySQL</td>
+<td>Database name `coursejdbc` (see `db.properties`)</td>
+<td>System of record for `seller` and `department` tables</td>
+</tr>
+<tr>
+<td rowspan="2"><strong>🔧 Build / IDE</strong></td>
+<td>Eclipse IDE</td>
+<td>`.project`, `.settings/`, `.classpath`</td>
+<td>Project is structured as a classic Eclipse Java project, not a Maven/Gradle build</td>
+</tr>
+<tr>
+<td>No build tool</td>
+<td>—</td>
+<td>No `pom.xml` or `build.gradle` — compiled/run directly via `javac`/`java` or the IDE</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+</details>
+
+## 🎨 Design Patterns Applied
+
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+| Pattern | Where | Rationale |
+|---------|-------|-----------|
+| 🧱 **Data Access Object (DAO)** | `SellerDao` (interface) + `SellerDaoJDBC` (implementation) | Isolates SQL/JDBC details from the rest of the application |
+| 🏭 **Factory Method** | `DaoFactory.createSellerDao()` | Centralizes how a `SellerDaoJDBC` is instantiated and wired to a `Connection`, so callers never `new` it directly |
+| 🔌 **Singleton (connection holder)** | `DB.getConnection()` guarding a private static `Connection conn` | A single JDBC connection is lazily created and reused for the process lifetime |
+| 🧭 **Strategy (interface/implementation split)** | `SellerDao` interface vs. `SellerDaoJDBC` | A future `SellerDaoMemory` or `SellerDaoJPA` could substitute the JDBC implementation without touching `Program` |
+| 🚧 **Guard Clause / Fail Fast** | `deleteById` throwing `DbException("Inexistence ID!")` when `rows == 0` | Converts a silent no-op delete into an explicit failure |
+| 🗺️ **Identity Map (local, per-call)** | `Map<Integer, Department> map` inside `findAll()`/`findByDepartment()` | Avoids constructing a duplicate `Department` object for every `Seller` row sharing the same department |
+| 🎁 **Wrapped/Unchecked Exception** | `DbException extends RuntimeException` wrapping `SQLException` | Converts checked `SQLException` into an unchecked exception so DAO method signatures stay clean |
+| 🧹 **Try/Finally Resource Cleanup** | Every DAO method: `finally { DB.closeStatement(st); DB.closeResultSet(rs); }` | JDBC resources are pre-try-with-resources style, closed manually and defensively |
+
+---
+
+</details>
+
+## 📁 Project Structure
+
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+```
 demo_dao_jdbc/
 │
-├── 📄 database.sql                            # 🗃️  DB creation script + sample data
-├── 📄 db.properties                           # ⚙️  MySQL connection credentials ← DO NOT version
-├── 📄 .classpath                              # ⚙️  Classpath configuration (Eclipse)
-├── 📄 .project                                # ⚙️  Project configuration (Eclipse)
+├── 📄 .classpath                       # Eclipse classpath — JRE container + mysql-connector-j-8.3.0.jar
+├── 📄 .project                         # Eclipse project descriptor (name: demo_dao_jdbc, Java nature)
+├── 📄 .gitignore                       # Ignores compiled classes, secrets, IDE files, local DB dumps
+├── 📄 classpath.txt                    # Legacy/backup copy of the classpath (JavaSE-10 + MySQLConnector lib)
+├── 📄 project.txt                      # Legacy/backup copy of the project descriptor
+├── 📄 db.properties                    # JDBC connection config: user, password, dburl, useSSL (NOT to be committed with real secrets)
 │
-└── 📁 src/
-    ├── 📁 model/
-    │   ├── 📁 entities/
-    │   │   ├── 📄 Department.java             # 🏛️  Department entity
-    │   │   └── 📄 Seller.java                 # 🏛️  Seller entity
-    │   │
-    │   └── 📁 dao/
-    │       ├── 📄 DepartmentDao.java          # 📋 DAO interface — Department
-    │       ├── 📄 SellerDao.java              # 📋 DAO interface — Seller
-    │       │
-    │       └── 📁 impl/
-    │           ├── 📄 DepartmentDaoJDBC.java  # ⚙️  JDBC implementation — Department ← CORE
-    │           └── 📄 SellerDaoJDBC.java      # ⚙️  JDBC implementation — Seller ← CORE
-    │
-    ├── 📁 db/
-    │   ├── 📄 DB.java                         # 🔌 JDBC connection utility
-    │   ├── 📄 DbException.java                # 🚨 Database exception
-    │   └── 📄 DbIntegrityException.java       # 🚨 Referential integrity exception
-    │
-    └── 📁 application/
-        ├── 📄 DaoFactory.java                 # 🏭 DAO instance factory
-        └── 📄 Program.java                    # ▶️  Demonstration of all CRUD operations
+├── 📂 src/
+│   ├── 📄 module-info.java             # Java module descriptor — requires java.sql
+│   │
+│   ├── 📂 application/
+│   │   └── 📄 Program.java             # ★ Entry point — scripted CRUD walkthrough (TEST 1..6)
+│   │
+│   ├── 📂 db/
+│   │   ├── 📄 DB.java                  # Connection holder: getConnection/closeConnection/closeStatement/closeResultSet
+│   │   ├── 📄 DbException.java         # Unchecked wrapper for SQLException and IO errors
+│   │   └── 📄 DbIntegrityException.java # Unchecked exception reserved for FK/integrity violations (currently unused)
+│   │
+│   └── 📂 model/
+│       ├── 📂 dao/
+│       │   ├── 📄 DaoFactory.java      # Factory Method — builds a wired SellerDaoJDBC
+│       │   ├── 📄 SellerDao.java       # DAO interface for Seller CRUD + findByDepartment
+│       │   ├── 📄 DepartmentDao.java   # DAO interface for Department CRUD (no implementation present)
+│       │   └── 📂 impl/
+│       │       └── 📄 SellerDaoJDBC.java # ★ The only concrete DAO — PreparedStatement-based JDBC implementation
+│       │
+│       └── 📂 entities/
+│           ├── 📄 Seller.java          # Domain entity: id, name, email, birthDate, baseSalary, department
+│           └── 📄 Department.java      # Domain entity: id, name
+│
+├── 📂 CoopVale/                        # Unrelated nested project (Flask credit-union system, own 3 READMEs)
+│
+├── 📄 README.md                        # 🇺🇸 English (primary)
+├── 📄 README_PT.md                     # 🇧🇷 Português
+└── 📄 README_ES.md                     # 🇪🇸 Español
 ```
 
 ---
 
-## 🚀 How to Run
+</details>
 
-### 📋 Prerequisites
+## 📦 Program — Entry Point
 
-| Requirement | Detail |
-|:----------|:--------|
-| **JDK** | Version **11 or higher**, installed and on `PATH`. |
-| **MySQL Server** | Version **8.x** running locally (default port `3306`). |
-| **MySQL Connector/J** | JDBC driver added to the project's classpath. |
-| **Eclipse IDE** | Recommended — configuration files already included in the repository. |
-| **Git** | To clone the repository. |
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+`application.Program` is the sole `main()` method in the project. It is written as a linear, narrated script rather than an interactive menu or a test harness.
+
+| Step | Label in output | Operation | DAO call |
+|------|------------------|-----------|----------|
+| 1 | `TEST 1: seller findById` | Look up a single seller by a hardcoded id (`3`) | `sellerDao.findById(3)` |
+| 2 | `TEST 2: seller findByDepartment` | List sellers belonging to a department constructed inline (`id=2`) | `sellerDao.findByDepartment(department)` |
+| 3 | `TEST 3: seller findAll` | List every seller, joined with department name | `sellerDao.findAll()` |
+| 4 | `TEST 4: seller INSERT` | Insert a new seller (`Greg`) and print the generated id | `sellerDao.insert(newSeller)` |
+| 5 | `TEST 5: seller update` | Reload seller `1`, rename it, and persist the change | `sellerDao.findById(1)` then `sellerDao.update(seller)` |
+| 6 | `TEST 6: seller delete` | Read an id from `System.in` via `Scanner` and delete that row | `sellerDao.deleteById(id)` |
+
+The `Scanner` used for step 6 is explicitly closed at the end of `main`, but the JDBC `Connection` obtained via `DaoFactory`/`DB` is never explicitly closed by `Program` — it relies on process exit (see [Known Limitations](#-known-limitations)).
 
 ---
 
-### 🔧 Step by Step
+## 🗄️ DB — Connection Manager
 
-**1. Clone the repository:**
+`db.DB` is a small static utility class that owns the JDBC connection lifecycle for the whole program.
 
-```bash
-git clone https://github.com/VictorHJesusSantiago/demo_dao_jdbc.git
-cd demo_dao_jdbc
-```
+| Method | Responsibility |
+|--------|-----------------|
+| `getConnection()` | Lazily creates a single `Connection` via `DriverManager.getConnection(url, props)`, reusing it if already open |
+| `closeConnection()` | Closes the held connection if non-null |
+| `loadProperties()` (private) | Opens `db.properties` from the working directory via `FileInputStream`, loads it into a `java.util.Properties` |
+| `closeStatement(Statement st)` | Null-safe close for any `Statement`/`PreparedStatement` |
+| `closeResultSet(ResultSet rs)` | Null-safe close for any `ResultSet` |
 
-**2. Create the database and tables:**
-
-```bash
-mysql -u root -p < database.sql
-```
-
-**3. Configure credentials in `db.properties`:**
-
-```properties
-dburl=jdbc:mysql://localhost:3306/coursejdbc
-user=root
-password=your_password_here
-useSSL=false
-```
-
-**4. Open in Eclipse IDE:**
-
-```
-File → Import → Existing Projects into Workspace
-→ Select the 'demo_dao_jdbc' folder
-→ Finish
-```
-
-**5. Add MySQL Connector/J to the Build Path:**
-
-```
-Right-click the project → Build Path → Add External Archives
-→ Select the mysql-connector-j-X.X.X.jar file
-```
-
-**6. Run the program:**
-
-```
-Right-click src/application/Program.java
-→ Run As → Java Application
-```
+Every checked `SQLException` or `IOException` encountered inside `DB` is rethrown as an unchecked `DbException`, so callers never need a `try/catch` around connection setup.
 
 ---
 
-### 🖥️ Sample Console Output
+## 🏭 DaoFactory
 
+`model.dao.DaoFactory` exposes exactly one static factory method:
+
+```java
+public static SellerDao createSellerDao() {
+    return new SellerDaoJDBC(DB.getConnection());
+}
 ```
-=== TEST 1: findById ===
-Seller{id=3, name=Alex Grey, email=alex@gmail.com, ...}
 
-=== TEST 2: findByDepartment ===
-Seller{id=1, name=Bob Brown, email=bob@gmail.com, ...}
-Seller{id=2, name=Maria Pink, email=maria@gmail.com, ...}
-
-=== TEST 3: findAll ===
-[complete list of sellers]
-
-=== TEST 4: Seller insert ===
-Inserted! New id = 6
-
-=== TEST 5: Seller update ===
-Update completed!
-
-=== TEST 6: Seller delete ===
-Done! Deleted!
-```
+This is the single seam in the codebase where a concrete DAO implementation is chosen and wired to a live `Connection`. There is no equivalent `createDepartmentDao()` method yet, even though `DepartmentDao` exists as an interface (see [Known Limitations](#-known-limitations)).
 
 ---
 
-## 📋 Requirements & Software Engineering Docs
+## 🔌 SellerDao / SellerDaoJDBC
 
-> Click each item below to expand/collapse. All requirements are scoped to the `demo_dao_jdbc` domain (DAO pattern, Seller/Department persistence over JDBC + MySQL).
+`model.dao.SellerDao` declares the contract; `model.dao.impl.SellerDaoJDBC` is the only implementation.
 
-### 🎯 Requirements
+| Method | SQL statement | Notes |
+|--------|---------------|-------|
+| `insert(Seller obj)` | `INSERT INTO seller (Name, Email, BirthDate, BaseSalary, DepartmentId) VALUES (?, ?, ?, ?, ?)` | Uses `Statement.RETURN_GENERATED_KEYS` and reads the new id back via `getGeneratedKeys()` |
+| `update(Seller obj)` | `UPDATE seller SET Name=?, Email=?, BirthDate=?, BaseSalary=?, DepartmentId=? WHERE id=?` | No existence check before update |
+| `deleteById(Integer id)` | `DELETE FROM seller WHERE Id = ?` | Throws `DbException("Inexistence ID!")` when `executeUpdate()` reports 0 rows affected |
+| `findById(Integer id)` | `SELECT seller.*, department.Name as DepName FROM seller INNER JOIN department ON seller.DepartmentId = department.Id WHERE seller.Id = ?` | Returns `null` when no row matches |
+| `findAll()` | Same join, `ORDER BY Name`, no `WHERE` | Uses a local `Map<Integer, Department>` to deduplicate `Department` instances across rows |
+| `findByDepartment(Department department)` | Same join filtered `WHERE DepartmentId = ?`, `ORDER BY Name` | Same deduplication map pattern as `findAll()` |
 
-<details>
-<summary><strong>✅ Functional Requirements (FR)</strong></summary>
+Two private helpers, `instantiateSeller(ResultSet, Department)` and `instantiateDepartment(ResultSet)`, centralize row-to-object mapping and are reused by all three read methods.
 
-| ID | Requirement |
-|:---|:------------|
-| FR-01 | The system shall find a `Seller` by its `id`. |
-| FR-02 | The system shall list all `Seller` records, including department data. |
-| FR-03 | The system shall list all `Seller` records belonging to a given `Department`. |
-| FR-04 | The system shall insert a new `Seller`, returning the auto-generated `id`. |
-| FR-05 | The system shall update the data of an existing `Seller`. |
-| FR-06 | The system shall delete a `Seller` by its `id`. |
-| FR-07 | The system shall find a `Department` by its `id`. |
-| FR-08 | The system shall list all `Department` records. |
-| FR-09 | The system shall insert a new `Department`. |
-| FR-10 | The system shall update the data of an existing `Department`. |
-| FR-11 | The system shall delete a `Department` by its `id`. |
-| FR-12 | The system shall raise a `DbIntegrityException` when deleting a `Department` referenced by existing `Seller` records. |
-| FR-13 | The system shall provide DAO instances through `DaoFactory`, decoupling the application from concrete implementations. |
+---
 
-</details>
+## 🗂️ DepartmentDao
 
-<details>
-<summary><strong>⚙️ Non-Functional Requirements (NFR)</strong></summary>
+`model.dao.DepartmentDao` declares a full CRUD contract (`insert`, `update`, `deleteById`, `findById`, `findAll`) mirroring `SellerDao`'s shape, but **no implementing class exists in the codebase** — there is no `DepartmentDaoJDBC`, and `DaoFactory` has no `createDepartmentDao()` method. The interface documents the intended surface for a future implementation; see [Known Limitations](#-known-limitations).
 
-| ID | Requirement |
-|:---|:------------|
-| NFR-01 | **Security:** database credentials live in `db.properties`, externalized from source code and excluded from version control. |
-| NFR-02 | **Portability:** runs on any OS with JDK 11+ and a MySQL-compatible driver. |
-| NFR-03 | **Maintainability:** the DAO pattern decouples persistence from business logic; switching databases only changes the `*DaoJDBC` classes. |
-| NFR-04 | **Reliability:** `DB.java` centralizes opening/closing of `Connection`, `Statement`, and `ResultSet` to avoid resource leaks. |
-| NFR-05 | **Performance & Security:** all queries use `PreparedStatement`, preventing SQL injection and enabling statement reuse. |
-| NFR-06 | **Testability:** DAO interfaces (`SellerDao`, `DepartmentDao`) allow mocking persistence in unit tests. |
-| NFR-07 | **Usability:** entities override `toString()` for human-readable console output. |
+---
 
-</details>
+## 🧬 Domain Entities
 
-<details>
-<summary><strong>📏 Business Rules (BR)</strong></summary>
+Both entities live in `model.entities` and implement `Serializable`, override `equals()`/`hashCode()` by `id` only, and override `toString()`.
 
-| ID | Rule |
-|:---|:-----|
-| BR-01 | Every `Seller` must belong to exactly one `Department` (`DepartmentId` is `NOT NULL` FK). |
-| BR-02 | A `Department` cannot be deleted while it has associated `Seller` records (enforced by the FK constraint, surfaced as `DbIntegrityException`). |
-| BR-03 | `Seller.Name`, `Email`, `BirthDate`, and `BaseSalary` are mandatory (`NOT NULL`). |
-| BR-04 | New `Seller`/`Department` IDs are generated by MySQL `AUTO_INCREMENT` and written back into the Java object after `insert()`. |
-| BR-05 | Two `Seller` or `Department` instances are considered equal if and only if their `id` values are equal (`equals`/`hashCode`). |
-| BR-06 | A `Connection`, `Statement`, and `ResultSet` must always be closed after a DAO operation, regardless of success or failure. |
+| Entity | Fields | Notes |
+|--------|--------|-------|
+| `Seller` | `id`, `name`, `email`, `birthDate` (`java.util.Date`), `baseSalary` (`Double`), `department` (`Department`) | Two constructors: no-args and all-args |
+| `Department` | `id`, `name` | Two constructors: no-args and all-args |
+
+---
+
+## ⚠️ Exceptions
+
+Both exceptions live in `db` and extend `RuntimeException` directly (unchecked).
+
+| Exception | Thrown by | Purpose |
+|-----------|-----------|---------|
+| `DbException` | `DB` (SQL/IO failures), `SellerDaoJDBC` (all `SQLException`s, plus the "Inexistence ID!" and "Unexpected error! No rows affected!" business failures) | General-purpose wrapper so DAO callers do not need to catch checked exceptions |
+| `DbIntegrityException` | Nowhere in the current code | Declared for future use around referential-integrity violations (e.g. deleting a `Department` that still has `Seller`s), but not yet thrown anywhere |
+
+---
 
 </details>
 
-<details>
-<summary><strong>🌐 Domain Requirements</strong></summary>
+## 💼 Business Rules
 
-- Belongs to the **Sales / HR management** domain: a company organized into **departments** that employ **sellers**.
-- The database schema (`coursejdbc`, tables `department` and `seller`) follows the classic schema used in DAO/JDBC educational courses.
-- No ORM (Hibernate/JPA) is used — all SQL statements are written explicitly inside the `*DaoJDBC` classes.
-- The project targets **Java SE** console applications (`Program.java` as entry point), suitable as a reusable persistence layer for future UI or web extensions.
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+### 🧾 Seller Persistence Rules
+
+| # | Rule | Enforcement |
+|---|------|-------------|
+| BR-01 | A newly inserted seller must receive its database-generated id back on the in-memory object | `insert()` reads `getGeneratedKeys()` and calls `obj.setId(id)` |
+| BR-02 | An insert that affects zero rows is treated as an unexpected failure | `insert()` throws `DbException("Unexpected error!No rows affected!")` |
+| BR-03 | Deleting a non-existent seller id must fail loudly, not silently | `deleteById()` throws `DbException("Inexistence ID!")` when `rows == 0` |
+| BR-04 | Every seller read is always joined with its department name | `findById`, `findAll`, `findByDepartment` all `INNER JOIN department` |
+| BR-05 | `findAll()` and `findByDepartment()` results are alphabetically ordered by seller name | `ORDER BY Name` in both queries |
+| BR-06 | The same `Department` object is reused for every seller row sharing that department within one call | Local `Map<Integer, Department>` cache in `findAll()`/`findByDepartment()` |
+
+### 🔌 Connectivity Rules
+
+| # | Rule | Enforcement |
+|---|------|-------------|
+| BR-07 | Database credentials must never be hardcoded in Java source | Loaded at runtime from `db.properties` via `DB.loadProperties()` |
+| BR-08 | Only one JDBC `Connection` exists per process | `DB.getConnection()` lazily initializes and reuses a single static `Connection` |
+| BR-09 | Every JDBC resource acquired in a DAO method must be released, success or failure | `finally { DB.closeStatement(st); DB.closeResultSet(rs); }` in every method |
+
+---
 
 </details>
 
-<details>
-<summary><strong>🗄️ Data Requirements</strong></summary>
+## ✅ Functional Requirements
 
-- All persistent entities are stored in **MySQL** relational tables (`department`, `seller`).
-- Referential integrity is enforced via `FOREIGN KEY (seller.DepartmentId) REFERENCES department(Id)`.
-- `BirthDate` is stored as `DATETIME`; `BaseSalary` as `DOUBLE`.
-- Primary keys (`Id`) are `INT AUTO_INCREMENT`.
-- Every `ResultSet`, `Statement`, and `Connection` opened by a DAO must be released via `DB.closeResultSet()` / `DB.closeStatement()` / `DB.closeConnection()`.
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| **RF-01** | The system shall connect to a MySQL database using externally configured credentials | 🔴 High | ✅ Implemented |
+| **RF-02** | The system shall find a single seller by id, joined with department name | 🔴 High | ✅ Implemented |
+| **RF-03** | The system shall list all sellers belonging to a given department | 🔴 High | ✅ Implemented |
+| **RF-04** | The system shall list all sellers in the database, ordered by name | 🔴 High | ✅ Implemented |
+| **RF-05** | The system shall insert a new seller and return its generated id | 🔴 High | ✅ Implemented |
+| **RF-06** | The system shall update an existing seller's data | 🔴 High | ✅ Implemented |
+| **RF-07** | The system shall delete a seller by id and fail if the id does not exist | 🔴 High | ✅ Implemented |
+| **RF-08** | The system shall prevent SQL injection on every DAO query | 🔴 High | ✅ Implemented |
+| **RF-09** | The system shall avoid duplicate `Department` objects when reading multiple sellers | 🟡 Medium | ✅ Implemented |
+| **RF-10** | The system shall expose a `DepartmentDao` interface for department CRUD | 🟡 Medium | ⚠️ Partial (interface only, no `SellerDaoJDBC`-equivalent implementation) |
+| **RF-11** | The system shall wire DAO implementations through a factory rather than direct instantiation | 🟡 Medium | ✅ Implemented |
+| **RF-12** | The system shall demonstrate every CRUD operation via a runnable script | 🔴 High | ✅ Implemented |
+| **RF-13** | The system shall read a delete-target id interactively from standard input | 🟢 Low | ✅ Implemented |
+| **RF-14** | The system shall report clear errors for integrity violations (e.g. deleting a department in use) | 🟢 Low | ⬜ Planned (`DbIntegrityException` declared but never thrown) |
+
+---
 
 </details>
 
-<details>
-<summary><strong>🖱️ Interface Requirements</strong></summary>
+## ⚡ Non-Functional Requirements
 
-- **Console interface (CLI):** `java.util.Scanner` reads user input (e.g., the ID to delete in `Program.java`).
-- **JDBC interface:** `java.sql.Connection` / `PreparedStatement` / `ResultSet` for communication with MySQL.
-- **DAO interfaces:** `SellerDao` and `DepartmentDao` define the contract between the application and the persistence layer.
-- **Factory interface:** `DaoFactory` is the single entry point for obtaining DAO instances.
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+| ID | Category | Requirement | Target |
+|----|----------|-------------|--------|
+| **RNF-01** | 🔐 Security | SQL statements must be parameterized, never string-concatenated | 100% of DAO queries use `PreparedStatement` with `?` placeholders |
+| **RNF-02** | 🔐 Configuration | Credentials must live outside source code | `db.properties`, loaded via `FileInputStream` at runtime |
+| **RNF-03** | 🧱 Maintainability | Persistence logic must be isolated behind interfaces | `SellerDao`/`DepartmentDao` interfaces, `impl` sub-package for concrete classes |
+| **RNF-04** | 🧹 Resource Management | Every `Statement`/`ResultSet` opened must be closed | `finally` blocks calling `DB.closeStatement`/`DB.closeResultSet` in every DAO method |
+| **RNF-05** | 📦 Footprint | No external framework or ORM dependency | Only `java.sql` (JDK standard library) plus the MySQL JDBC driver |
+| **RNF-06** | 🧩 Portability | The project must compile as a Java module | `module-info.java` declares `requires java.sql` |
+| **RNF-07** | 🎓 Readability | The demo script must be readable top-to-bottom without external documentation | `Program.main` prints a `=== TEST n: ... ===` banner before each step |
+| **RNF-08** | 🔁 Idempotent Reads | Repeated `findById`/`findAll`/`findByDepartment` calls must not mutate state | All three are pure `SELECT` queries |
+
+---
 
 </details>
 
-<details>
-<summary><strong>🎭 Use Cases</strong></summary>
-
-| ID | Use Case | Primary Actor | Summary |
-|:---|:---------|:---------------|:--------|
-| UC-01 | Find Seller by ID | User | Retrieve a single seller record by its ID. |
-| UC-02 | List All Sellers | User | Retrieve every seller, including department data. |
-| UC-03 | List Sellers by Department | User | Retrieve sellers filtered by a given department. |
-| UC-04 | Register Seller | User | Insert a new seller and retrieve the generated ID. |
-| UC-05 | Update Seller | User | Persist changes to an existing seller. |
-| UC-06 | Remove Seller | User | Delete a seller by ID. |
-| UC-07 | Find Department by ID | User | Retrieve a single department by its ID. |
-| UC-08 | List All Departments | User | Retrieve every department. |
-| UC-09 | Register Department | User | Insert a new department. |
-| UC-10 | Update Department | User | Persist changes to an existing department. |
-| UC-11 | Remove Department | User | Delete a department; blocked if sellers still reference it. |
-
-</details>
+## 🗄️ Data Model
 
 <details>
-<summary><strong>🔗 Requirements Traceability Matrix</strong></summary>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
 
-| Requirement | Use Case | Class / Method | Reference |
-|:------------|:---------|:----------------|:----------|
-| FR-01 | UC-01 | `SellerDaoJDBC.findById` | `Program.java` — TEST 1 |
-| FR-02 | UC-02 | `SellerDaoJDBC.findAll` | `Program.java` — TEST 3 |
-| FR-03 | UC-03 | `SellerDaoJDBC.findByDepartment` | `Program.java` — TEST 2 |
-| FR-04 | UC-04 | `SellerDaoJDBC.insert` | `Program.java` — TEST 4 |
-| FR-05 | UC-05 | `SellerDaoJDBC.update` | `Program.java` — TEST 5 |
-| FR-06 | UC-06 | `SellerDaoJDBC.deleteById` | `Program.java` — TEST 6 |
-| FR-07 – FR-11 | UC-07 – UC-10 | `DepartmentDaoJDBC.*` | analogous to Seller, exposed via `DepartmentDao` |
-| FR-12 | UC-11 | `DepartmentDaoJDBC.deleteById` → `DbIntegrityException` | `db/DbIntegrityException.java` |
-| FR-13 | all | `DaoFactory.createSellerDao` / `createDepartmentDao` | `application/DaoFactory.java` |
-
-</details>
-
-<details>
-<summary><strong>📄 Software Requirements Specification (SRS) — Summary (IEEE 830-style)</strong></summary>
-
-1. **Introduction** — Purpose: document the functional and non-functional scope of the `demo_dao_jdbc` educational reference project. Audience: students and developers studying the DAO pattern.
-2. **Overall Description** — A console Java application demonstrating the DAO design pattern for `Seller`/`Department` persistence via JDBC and MySQL, with no ORM involved.
-3. **Specific Requirements** — See the **Functional Requirements (FR)**, **Non-Functional Requirements (NFR)**, and **Business Rules (BR)** items above.
-4. **External Interfaces** — See **Interface Requirements** above and the [Database](#️-database) section for the JDBC/MySQL connection contract.
-5. **Data Requirements** — See the **Data Architecture** group below (ER diagram, logical/physical models, data dictionary).
-6. **Constraints** — MySQL 8.x, Java 11+, MySQL Connector/J on the classpath, no ORM frameworks.
-7. **Acceptance Criteria** — Each FR maps to a `TEST n` block in `Program.java` that must run end-to-end against the `coursejdbc` schema without exceptions.
-
-</details>
-
-### 🧩 UML Diagrams
-
-<details>
-<summary><strong>🎭 Use Case Diagram</strong></summary>
-
-```mermaid
-flowchart LR
-    User([🧑‍💻 Console User])
-    Factory([🏭 DaoFactory])
-
-    User --> UC1((Find Seller by ID))
-    User --> UC2((List All Sellers))
-    User --> UC3((List Sellers by Department))
-    User --> UC4((Register Seller))
-    User --> UC5((Update Seller))
-    User --> UC6((Remove Seller))
-    User --> UC7((Find Department by ID))
-    User --> UC8((List All Departments))
-    User --> UC9((Register Department))
-    User --> UC10((Update Department))
-    User --> UC11((Remove Department))
-    Factory --> UC12((Provide DAO instance))
-```
-
-</details>
-
-<details>
-<summary><strong>🏛️ Class Diagram</strong></summary>
-
-```mermaid
-classDiagram
-    class Seller {
-      -Integer id
-      -String name
-      -String email
-      -Date birthDate
-      -Double baseSalary
-      -Department department
-    }
-    class Department {
-      -Integer id
-      -String name
-    }
-    class SellerDao {
-      <<interface>>
-      +insert(Seller)
-      +update(Seller)
-      +deleteById(Integer)
-      +findById(Integer) Seller
-      +findAll() List
-      +findByDepartment(Department) List
-    }
-    class DepartmentDao {
-      <<interface>>
-      +insert(Department)
-      +update(Department)
-      +deleteById(Integer)
-      +findById(Integer) Department
-      +findAll() List
-    }
-    class SellerDaoJDBC {
-      -Connection conn
-    }
-    class DepartmentDaoJDBC {
-      -Connection conn
-    }
-    class DaoFactory {
-      +createSellerDao() SellerDao
-      +createDepartmentDao() DepartmentDao
-    }
-    class DB {
-      +getConnection() Connection
-      +closeConnection()
-      +closeStatement()
-      +closeResultSet()
-    }
-    SellerDao <|.. SellerDaoJDBC
-    DepartmentDao <|.. DepartmentDaoJDBC
-    DaoFactory ..> SellerDaoJDBC : creates
-    DaoFactory ..> DepartmentDaoJDBC : creates
-    SellerDaoJDBC --> DB
-    DepartmentDaoJDBC --> DB
-    Seller "1" --> "1" Department
-    SellerDaoJDBC ..> Seller
-    DepartmentDaoJDBC ..> Department
-```
-
-</details>
-
-<details>
-<summary><strong>🧱 Object Diagram</strong></summary>
-
-```mermaid
-classDiagram
-    class dep2["dep2 : Department"] {
-        id = 2
-        name = "Electronics"
-    }
-    class seller1["seller1 : Seller"] {
-        id = 1
-        name = "Bob Brown"
-        email = "bob@gmail.com"
-        baseSalary = 1000.0
-    }
-    seller1 --> dep2 : department
-```
-
-</details>
-
-<details>
-<summary><strong>🔄 Sequence Diagram — findById</strong></summary>
-
-```mermaid
-sequenceDiagram
-    actor U as User
-    participant P as Program
-    participant F as DaoFactory
-    participant S as SellerDaoJDBC
-    participant D as DB
-    participant M as MySQL
-
-    U->>P: run main()
-    P->>F: createSellerDao()
-    F->>D: getConnection()
-    D-->>F: Connection
-    F-->>P: SellerDao instance
-    P->>S: findById(3)
-    S->>M: SELECT ... (PreparedStatement)
-    M-->>S: ResultSet
-    S-->>P: Seller object
-    P-->>U: print(seller)
-```
-
-</details>
-
-<details>
-<summary><strong>🤝 Communication (Collaboration) Diagram</strong></summary>
-
-```mermaid
-graph LR
-    Program -- "1: findById(id)" --> SellerDaoJDBC
-    SellerDaoJDBC -- "2: getConnection()" --> DB
-    SellerDaoJDBC -- "3: executeQuery()" --> MySQL
-    MySQL -- "4: ResultSet" --> SellerDaoJDBC
-    SellerDaoJDBC -- "5: instantiateSeller()" --> Seller
-    SellerDaoJDBC -- "6: return Seller" --> Program
-```
-
-</details>
-
-<details>
-<summary><strong>🏃 Activity Diagram — Program Execution</strong></summary>
-
-```mermaid
-flowchart TD
-    A([Start]) --> B[Create SellerDao via DaoFactory]
-    B --> C[TEST 1: findById]
-    C --> D[TEST 2: findByDepartment]
-    D --> E[TEST 3: findAll]
-    E --> F[TEST 4: insert new Seller]
-    F --> G[TEST 5: update Seller]
-    G --> H{Read ID from Scanner}
-    H --> I[TEST 6: deleteById]
-    I --> J[Close Connection & Scanner]
-    J --> K([End])
-```
-
-</details>
-
-<details>
-<summary><strong>🔁 State Machine Diagram — Connection Lifecycle</strong></summary>
-
-```mermaid
-stateDiagram-v2
-    [*] --> Closed
-    Closed --> Connecting: DB.getConnection()
-    Connecting --> Open: connection established
-    Open --> Executing: PreparedStatement.execute()
-    Executing --> Open: ResultSet processed
-    Open --> Closed: DB.closeConnection()
-    Closed --> [*]
-```
-
-</details>
-
-<details>
-<summary><strong>🧩 Component Diagram</strong></summary>
-
-```mermaid
-graph TB
-    subgraph App["Application Layer"]
-        Program[Program.java]
-    end
-    subgraph DAOLayer["DAO Layer"]
-        SellerDao[SellerDao interface]
-        DepartmentDao[DepartmentDao interface]
-        SellerDaoJDBC[SellerDaoJDBC]
-        DepartmentDaoJDBC[DepartmentDaoJDBC]
-        DaoFactory[DaoFactory]
-    end
-    subgraph Infra["Infrastructure"]
-        DB[DB utility]
-        Driver[MySQL Connector/J]
-    end
-    MySQL[(MySQL Database)]
-
-    Program --> DaoFactory
-    DaoFactory --> SellerDaoJDBC
-    DaoFactory --> DepartmentDaoJDBC
-    SellerDaoJDBC --> SellerDao
-    DepartmentDaoJDBC --> DepartmentDao
-    SellerDaoJDBC --> DB
-    DepartmentDaoJDBC --> DB
-    DB --> Driver
-    Driver --> MySQL
-```
-
-</details>
-
-<details>
-<summary><strong>🚀 Deployment Diagram</strong></summary>
-
-```mermaid
-graph TB
-    subgraph DevMachine["Developer Machine"]
-        JVM[JVM 11+ / Eclipse IDE]
-        App[demo_dao_jdbc]
-        Props[db.properties]
-    end
-    subgraph DBServer["Database Server (local/remote)"]
-        MySQL[(MySQL 8.x — coursejdbc schema)]
-    end
-    JVM --> App
-    App --> Props
-    App -- "JDBC (TCP 3306)" --> MySQL
-```
-
-</details>
-
-<details>
-<summary><strong>📦 Package Diagram</strong></summary>
-
-```mermaid
-graph TB
-    application[application]
-    model[model]
-    db[db]
-    entities[model.entities]
-    dao[model.dao]
-    impl[model.dao.impl]
-
-    application --> dao
-    application --> entities
-    application --> db
-    model --> entities
-    model --> dao
-    dao --> impl
-    impl --> entities
-    impl --> db
-```
-
-</details>
-
-<details>
-<summary><strong>🧬 Composite Structure Diagram — SellerDaoJDBC</strong></summary>
-
-```mermaid
-graph TB
-    subgraph SellerDaoJDBCModule["SellerDaoJDBC (internal structure)"]
-        direction TB
-        ConnPort["Connection (injected)"]
-        QueryBuilder["SQL / PreparedStatement Builder"]
-        Mapper["ResultSet → Seller Mapper"]
-        ConnPort --> QueryBuilder
-        QueryBuilder --> Mapper
-    end
-    Mapper -.-> Seller
-```
-
-</details>
-
-<details>
-<summary><strong>🗺️ Interaction Overview Diagram</strong></summary>
-
-```mermaid
-flowchart LR
-    Start([main starts]) --> Connect[Connection Setup Sequence]
-    Connect --> Read[Read Sequence — findById / findAll / findByDepartment]
-    Read --> Write[Write Sequence — insert / update]
-    Write --> Delete[Delete Sequence — deleteById]
-    Delete --> Close[Close Resources Sequence]
-    Close --> End([main ends])
-```
-
-</details>
-
-<details>
-<summary><strong>⏱️ Timing Diagram — Connection Lifecycle During Program Execution</strong></summary>
-
-| Time | Connection State | Event |
-|:-----|:------------------|:------|
-| T + 0 | `Closed` → `Open` | `DaoFactory.createSellerDao()` calls `DB.getConnection()`. |
-| T + 1 | `Open` | TESTs 1–5 execute `PreparedStatement`s sequentially on the same connection. |
-| T + 2 | `Open` | TEST 6 blocks waiting for `Scanner.nextInt()` (user input). |
-| T + 3 | `Open` → `Executing` | `deleteById` executes the `DELETE` statement. |
-| T + 4 | `Executing` → `Closed` | Connection and `Scanner` are closed at the end of `main()`. |
-
-</details>
-
-### 🗃️ Data Architecture
-
-<details>
-<summary><strong>🔗 ER Diagram (DER)</strong></summary>
+### Entity-Relationship Diagram
 
 ```mermaid
 erDiagram
-    DEPARTMENT ||--o{ SELLER : employs
+    DEPARTMENT ||--o{ SELLER : "employs"
+
     DEPARTMENT {
         int Id PK
-        varchar Name
+        string Name
     }
+
     SELLER {
         int Id PK
-        varchar Name
-        varchar Email
-        datetime BirthDate
+        string Name
+        string Email
+        date BirthDate
         double BaseSalary
-        int DepartmentId FK
+        int DepartmentId FK "references DEPARTMENT.Id"
     }
 ```
 
+The Java object graph mirrors this directly: `Seller.department` holds a full `Department` reference (not just an id), populated by `instantiateDepartment(ResultSet)` on every read.
+
+### `seller` Table (Inferred from SQL in `SellerDaoJDBC`)
+
+| Column | Type (inferred) | Notes |
+|--------|------------------|-------|
+| `Id` | `INT`, primary key, auto-increment | Read back via `Statement.RETURN_GENERATED_KEYS` on insert |
+| `Name` | `VARCHAR` | Mapped to `Seller.name` |
+| `Email` | `VARCHAR` | Mapped to `Seller.email` |
+| `BirthDate` | `DATE` | Mapped to `Seller.birthDate` via `java.sql.Date` |
+| `BaseSalary` | `DOUBLE`/`DECIMAL` | Mapped to `Seller.baseSalary` |
+| `DepartmentId` | `INT`, foreign key → `department.Id` | Mapped to `Seller.department.id` |
+
+### `department` Table (Inferred from SQL in `SellerDaoJDBC`)
+
+| Column | Type (inferred) | Notes |
+|--------|------------------|-------|
+| `Id` | `INT`, primary key | Aliased as `DepartmentId` in the seller-join queries |
+| `Name` | `VARCHAR` | Aliased as `DepName` in the seller-join queries to avoid collision with `seller.Name` |
+
+### `db.properties` Configuration Keys
+
+| Key | Example value in repo | Purpose |
+|-----|------------------------|---------|
+| `user` | `root` | MySQL username |
+| `password` | `adm2004` | MySQL password (present in the checked-in file — see [Security](#-security)) |
+| `dburl` | `jdbc:mysql://localhost:3306/coursejdbc` | Full JDBC connection URL, including the target schema |
+| `useSSL` | `false` | Passed through to the driver via `Properties`, disabling SSL for local development |
+
+---
+
 </details>
 
+## 🔄 System Flows
+
 <details>
-<summary><strong>💭 Conceptual Data Model</strong></summary>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
 
-High-level entities and relationships, independent of database technology:
+### Program Startup and Connection Flow
 
-- A **Department** groups zero or more **Sellers**.
-- A **Seller** belongs to exactly one **Department**.
-- Both entities are uniquely identified by a surrogate `Id`.
+```mermaid
+sequenceDiagram
+    autonumber
+    participant P as 🚀 Program.main
+    participant F as 🏭 DaoFactory
+    participant D as 🗄️ DB
+    participant M as 🐬 MySQL
+
+    P->>F: createSellerDao()
+    F->>D: getConnection()
+    alt Connection not yet open
+        D->>D: loadProperties() from db.properties
+        D->>M: DriverManager.getConnection(url, props)
+        M-->>D: Connection
+    else Connection already open
+        D-->>F: reuse cached Connection
+    end
+    F-->>P: new SellerDaoJDBC(conn)
+```
+
+### Insert Flow
+
+```mermaid
+flowchart TD
+    START([sellerDao.insert newSeller]) --> PS[Prepare INSERT statement\nwith RETURN_GENERATED_KEYS]
+    PS --> BIND[Bind Name, Email, BirthDate,\nBaseSalary, DepartmentId]
+    BIND --> EXEC[executeUpdate]
+    EXEC --> CHECK{rowsAffected > 0?}
+    CHECK -- No --> FAIL[Throw DbException\nUnexpected error!]
+    CHECK -- Yes --> KEYS[getGeneratedKeys]
+    KEYS --> HASNEXT{rs.next?}
+    HASNEXT -- Yes --> SETID[obj.setId generated id]
+    HASNEXT -- No --> DONE
+    SETID --> DONE([Statement + ResultSet closed in finally])
+    FAIL --> CLEANUP([Statement closed in finally])
+
+    style START fill:#1565C0,color:#fff
+    style FAIL fill:#B71C1C,color:#fff
+    style DONE fill:#2E7D32,color:#fff
+```
+
+### findAll / findByDepartment Deduplication Flow
+
+```mermaid
+flowchart TD
+    START([Query executes, ResultSet returned]) --> LOOP{rs.next?}
+    LOOP -- No --> RETURN([Return List Seller])
+    LOOP -- Yes --> LOOKUP[map.get DepartmentId]
+    LOOKUP --> FOUND{Department\nalready cached?}
+    FOUND -- No --> BUILD[instantiateDepartment\nfrom current row]
+    BUILD --> CACHE[map.put DepartmentId, dep]
+    CACHE --> BUILDS
+    FOUND -- Yes --> BUILDS[instantiateSeller rs, dep]
+    BUILDS --> ADD[list.add seller]
+    ADD --> LOOP
+
+    style START fill:#1565C0,color:#fff
+    style RETURN fill:#2E7D32,color:#fff
+```
+
+### Delete Flow
+
+```mermaid
+stateDiagram-v2
+    [*] --> Preparing: deleteById(id)
+    Preparing --> Executing: PreparedStatement bound
+    Executing --> RowsChecked: executeUpdate returns int
+    RowsChecked --> Success: rows > 0
+    RowsChecked --> Failed: rows == 0
+    Success --> [*]: Statement closed in finally
+    Failed --> [*]: DbException Inexistence ID!\nStatement closed in finally
+```
+
+---
 
 </details>
 
-<details>
-<summary><strong>🧮 Logical Data Model</strong></summary>
+## 🔐 Security
 
-| Entity | Key Attributes | Type |
-|:-------|:----------------|:-----|
-| Department | Id (PK), Name | int, string |
-| Seller | Id (PK), Name, Email, BirthDate, BaseSalary, DepartmentId (FK) | int, string, string, datetime, double, int |
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+### Implemented Controls
+
+| Control | Implementation | Effect |
+|---------|---------------|--------|
+| 🛡️ **Parameterized queries everywhere** | Every DAO method uses `PreparedStatement` with `?` placeholders | Eliminates SQL injection on all six DAO operations |
+| 🔑 **Credentials externalized** | `db.properties` loaded via `FileInputStream`, not hardcoded in `.java` files | Source code contains no embedded password strings |
+| 🧯 **Checked exceptions converted to unchecked** | `DbException` wraps every `SQLException` | Prevents leaking raw JDBC stack traces through method signatures |
+| ♻️ **Defensive resource closing** | `finally` blocks around every `Statement`/`ResultSet` | Reduces the chance of connection/cursor leaks under error conditions |
+
+### Known Security Limitations
+
+> [!WARNING]
+> This project is a teaching demo, not production-hardened code. The following are real, current gaps.
+
+| Limitation | Risk | Mitigation path |
+|------------|------|-----------------|
+| 🔓 **`db.properties` is committed with a real-looking password** (`adm2004`) | Anyone with repository access sees a credential that may be reused elsewhere | Move to environment variables or an untracked `.env`-style file; rotate the password if it was ever real |
+| 🌐 **`useSSL=false`** | Database traffic (including the password on connect) travels unencrypted | Set `useSSL=true` and configure a trusted certificate for any non-localhost database |
+| 🕳️ **No least-privilege database user** | `db.properties` uses `user=root`, granting full instance privileges to a demo app | Create a dedicated MySQL user scoped to `SELECT/INSERT/UPDATE/DELETE` on `coursejdbc` only |
+| 🧵 **Single shared `Connection`, no connection pool** | Under concurrent use this is a bottleneck and single point of failure | Introduce a pool (HikariCP, Apache DBCP) if the demo ever needs multi-threaded access |
+| 🚫 **No input validation on `Program`'s `Scanner.nextInt()`** | A non-integer input throws an uncaught `InputMismatchException` and crashes the program | Wrap the read in a validated loop or `try/catch` |
+
+---
 
 </details>
 
+## 🚀 Installation & Execution
+
 <details>
-<summary><strong>💾 Physical Data Model</strong></summary>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+### Prerequisites
+
+```bash
+# JDK 10 or newer (module-info.java targets JavaSE-10)
+java -version
+
+# A running MySQL server reachable at the URL configured in db.properties
+mysql --version
+
+# MySQL Connector/J on the classpath (mysql-connector-j-8.3.0.jar per .classpath)
+# Download from https://dev.mysql.com/downloads/connector/j/ if not using Eclipse's managed library
+```
+
+Create the `coursejdbc` schema and the `department`/`seller` tables before running the program (columns are inferred in [Data Model](#-data-model); no `.sql` seed script ships in this repository — see [Known Limitations](#-known-limitations)):
 
 ```sql
+CREATE DATABASE IF NOT EXISTS coursejdbc;
+USE coursejdbc;
+
 CREATE TABLE department (
-    Id   INT         NOT NULL AUTO_INCREMENT,
-    Name VARCHAR(60) NULL,
-    PRIMARY KEY (Id)
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE seller (
-    Id           INT          NOT NULL AUTO_INCREMENT,
-    Name         VARCHAR(60)  NOT NULL,
-    Email        VARCHAR(100) NOT NULL,
-    BirthDate    DATETIME     NOT NULL,
-    BaseSalary   DOUBLE       NOT NULL,
-    DepartmentId INT          NOT NULL,
-    PRIMARY KEY (Id),
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(60) NOT NULL,
+    Email VARCHAR(100) NOT NULL,
+    BirthDate DATE NOT NULL,
+    BaseSalary DOUBLE NOT NULL,
+    DepartmentId INT NOT NULL,
     FOREIGN KEY (DepartmentId) REFERENCES department (Id)
 );
 ```
 
-> Engine: **MySQL 8.x**. Schema created by `database.sql`.
+Edit `db.properties` at the project root with real, local credentials:
 
-</details>
-
-<details>
-<summary><strong>📖 Data Dictionary</strong></summary>
-
-| Table | Field | Type | Constraints | Description |
-|:------|:------|:-----|:------------|:------------|
-| department | Id | INT | PK, AUTO_INCREMENT | Unique department identifier. |
-| department | Name | VARCHAR(60) | NULL | Department name. |
-| seller | Id | INT | PK, AUTO_INCREMENT | Unique seller identifier. |
-| seller | Name | VARCHAR(60) | NOT NULL | Seller's full name. |
-| seller | Email | VARCHAR(100) | NOT NULL | Seller's e-mail address. |
-| seller | BirthDate | DATETIME | NOT NULL | Seller's date of birth. |
-| seller | BaseSalary | DOUBLE | NOT NULL | Seller's base salary. |
-| seller | DepartmentId | INT | NOT NULL, FK → department.Id | Department the seller belongs to. |
-
-</details>
-
-<details>
-<summary><strong>🔄 Data Flow Diagram (DFD)</strong></summary>
-
-```mermaid
-flowchart LR
-    User[Console User] -->|input| Program((Program.java))
-    Program -->|CRUD calls| DAO((DAO Layer))
-    DAO -->|SQL queries| MySQLDB[(MySQL: coursejdbc)]
-    MySQLDB -->|ResultSet| DAO
-    DAO -->|Java objects| Program
-    Program -->|console output| User
+```properties
+user=your_mysql_user
+password=your_mysql_password
+dburl=jdbc:mysql://localhost:3306/coursejdbc
+useSSL=false
 ```
 
-</details>
+### Build
 
-<details>
-<summary><strong>🧬 Data Lineage Diagram</strong></summary>
+```bash
+# From the project root, compile every source file into ./bin
+javac -d bin --module-path . -m demo_dao_jdbc
 
-```mermaid
-flowchart TD
-    SQLScript[database.sql] --> MySQLDB[(coursejdbc DB)]
-    MySQLDB --> SellerDaoJDBC
-    MySQLDB --> DepartmentDaoJDBC
-    SellerDaoJDBC --> SellerObjects[Seller objects]
-    DepartmentDaoJDBC --> DepartmentObjects[Department objects]
-    SellerObjects --> Console[Console output]
-    DepartmentObjects --> Console
+# Or, without module resolution (simpler for this small project):
+javac -d bin -cp "path/to/mysql-connector-j-8.3.0.jar" $(find src -name "*.java")
 ```
 
-</details>
+In Eclipse: import as an existing project (`.project` and `.classpath` are already provided), ensure the `mysql-connector-j-8.3.0.jar` user library resolves, and build automatically via the IDE.
 
-### 🏗️ Architecture & UX
+### Execution
 
-<details>
-<summary><strong>🏛️ Architecture Diagram (Overview)</strong></summary>
-
-```mermaid
-graph TB
-    subgraph Application["Application Layer"]
-        Program[Program.java]
-    end
-    subgraph Domain["Domain Layer"]
-        Entities[Seller / Department]
-    end
-    subgraph Persistence["Persistence Layer"]
-        Interfaces[SellerDao / DepartmentDao]
-        Impl[SellerDaoJDBC / DepartmentDaoJDBC]
-        Factory[DaoFactory]
-    end
-    subgraph Infrastructure["Infrastructure Layer"]
-        DBUtil[DB utility]
-        Driver[JDBC Driver]
-    end
-    DBServer[(MySQL Database)]
-
-    Program --> Factory
-    Factory --> Impl
-    Impl --> Interfaces
-    Impl --> Entities
-    Impl --> DBUtil
-    DBUtil --> Driver
-    Driver --> DBServer
+```bash
+# Run from the project root so db.properties (relative path) is found
+java -cp "bin;path/to/mysql-connector-j-8.3.0.jar" application.Program
+# On Linux/macOS use a colon separator instead of a semicolon:
+# java -cp "bin:path/to/mysql-connector-j-8.3.0.jar" application.Program
 ```
 
-</details>
+**Expected interactive step**
 
-<details>
-<summary><strong>🔀 Flowchart — Program Execution</strong></summary>
+When `TEST 6: seller delete` prints, the program blocks on `Scanner.nextInt()` — type a valid seller id from your `seller` table and press Enter to complete the run.
 
-```mermaid
-flowchart TD
-    Start([Run Program.java]) --> T1[TEST 1: findById]
-    T1 --> T2[TEST 2: findByDepartment]
-    T2 --> T3[TEST 3: findAll]
-    T3 --> T4[TEST 4: insert]
-    T4 --> T5[TEST 5: update]
-    T5 --> Input{Enter ID to delete}
-    Input --> T6[TEST 6: deleteById]
-    T6 --> End([Program ends])
-```
+### Program Output Sections
 
-</details>
+| Section label | What it exercises |
+|--------|---------|
+| `TEST 1: seller findById` | `findById(3)` |
+| `TEST 2: seller findByDepartment` | `findByDepartment(new Department(2, null))` |
+| `TEST 3: seller findAll` | `findAll()` |
+| `TEST 4: seller INSERT` | `insert(new Seller(...))` for a seller named `Greg` |
+| `TEST 5: seller update` | `findById(1)` then `update(seller)`, renaming to `Martha Waine` |
+| `TEST 6: seller delete` | Interactive `deleteById(id)` |
 
-<details>
-<summary><strong>🙋 Personas</strong></summary>
+### Build Configuration
 
-| Persona | Profile | Goals | Pain Points |
-|:--------|:--------|:------|:------------|
-| 🎓 **Diego, 22 — CS Student** | Learning Java persistence patterns for the first time. | Understand the DAO pattern without ORM "magic" hiding the SQL. | JDBC boilerplate, manual resource management, unclear error handling. |
-| 💻 **Camila, 30 — Backend Developer** | Evaluating the DAO pattern for a legacy system migration. | Decouple persistence from business logic in a maintainable way. | Tight coupling to vendor-specific SQL across the codebase. |
-
-</details>
-
-<details>
-<summary><strong>🗺️ User Journey Map — "Diego learns the DAO pattern"</strong></summary>
-
-| Stage | Action | Touchpoint | Emotion | Opportunity |
-|:------|:-------|:-----------|:--------|:------------|
-| Discovery | Clones the repository and reads the README | GitHub | 🙂 Curious | Clear, illustrated setup instructions. |
-| Setup | Creates the `coursejdbc` database and configures `db.properties` | MySQL CLI / Eclipse | 😐 Cautious | Provide a ready-to-edit `db.properties` template. |
-| Exploration | Runs `Program.java` and reads the numbered TEST output | Eclipse Console | 🙂 Engaged | Numbered `TEST n` sections map directly to FRs. |
-| Understanding | Reads `SellerDao` / `SellerDaoJDBC` source code | IDE | 😊 Satisfied | Architecture & class diagrams as a map of the code. |
-| Extension | Creates a new entity + DAO following the same pattern | IDE | 😄 Confident | Class diagram and package structure as a reusable template. |
-
-</details>
-
-<details>
-<summary><strong>📐 Wireframe — Console Output</strong></summary>
-
-```text
-┌─────────────────────────────────────────────────────────┐
-│ === TEST 1: findById ===                                  │
-│ Seller [id=3, name=Alex Grey, email=alex@gmail.com, ...]  │
-│                                                            │
-│ === TEST 2: findByDepartment ===                          │
-│ Seller [id=1, name=Bob Brown, ...]                        │
-│ Seller [id=2, name=Maria Pink, ...]                       │
-│                                                            │
-│ === TEST 3: findAll ===                                   │
-│ Seller [id=1, ...]                                        │
-│ Seller [id=2, ...]                                        │
-│ ...                                                       │
-│                                                            │
-│ === TEST 4: Seller insert ===                             │
-│ Inserted! New id = 6                                      │
-│                                                            │
-│ === TEST 5: Seller update ===                             │
-│ Update completed!                                         │
-│                                                            │
-│ === TEST 6: Seller delete ===                             │
-│ Enter id for delete test: _                               │
-└─────────────────────────────────────────────────────────┘
-```
-
-</details>
-
-<details>
-<summary><strong>🎨 Mockup — Conceptual Seller Management UI (future extension)</strong></summary>
-
-```text
-┌─────────────────────────────────────────────────────┐
-│  🗃️ Seller Manager (conceptual UI)                   │
-├─────────────────────────────────────────────────────┤
-│ Department: [ Electronics ▼ ]        [+ New Seller]  │
-│ ┌─────┬────────────┬──────────────────┬────────────┐│
-│ │ ID  │ Name        │ Email             │ Salary     ││
-│ ├─────┼────────────┼──────────────────┼────────────┤│
-│ │ 1   │ Bob Brown   │ bob@gmail.com     │ 1000.00    ││
-│ │ 2   │ Maria Pink  │ maria@gmail.com   │ 3500.00    ││
-│ └─────┴────────────┴──────────────────┴────────────┘│
-│               [Edit]   [Delete]   [Save]             │
-└─────────────────────────────────────────────────────┘
-```
-
-> 💡 This GUI is **not implemented** — it illustrates how the existing DAO layer could back a future desktop/web front-end without any changes to `model.dao`.
-
-</details>
+| Setting | Value | Declared in |
+|---------|-------|-------------|
+| Project name | `demo_dao_jdbc` | `.project` |
+| Java module name | `demo_dao_jdbc` | `src/module-info.java` |
+| Module dependency | `java.sql` | `src/module-info.java` |
+| Source folder | `src` | `.classpath`, `classpath.txt` |
+| Output folder | `bin` | `.classpath`, `classpath.txt` |
+| JDBC driver library | `mysql-connector-j-8.3.0.jar` (current), `MySQLConnector` (legacy, per `classpath.txt`) | `.classpath` / `classpath.txt` |
 
 ---
 
-## 🗺️ Roadmap
+</details>
 
-| Status | Item |
-|:------:|:-----|
-| 🔲 | Implement `DepartmentDaoJDBC` usage examples in `Program.java`. |
-| 🔲 | Add automated tests (JUnit) covering each DAO method. |
-| 🔲 | Externalize `db.properties` example as `db.properties.example`. |
-| 🔲 | Optional desktop/web UI on top of the existing DAO layer. |
+## 🧪 Automated Tests
+
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
+
+### Test Architecture
+
+```mermaid
+flowchart TB
+    subgraph CURRENT["📋 Current State — No automated test suite"]
+        PROG["Program.main\n─────────────\nActs as a manual,\nprinted-output smoke script"]
+    end
+    subgraph PROPOSED["🎯 Proposed Suite (not implemented)"]
+        direction TB
+        UNIT["Unit tests\n─────────────\nSeller/Department equals-hashCode\nDaoFactory wiring"]
+        INTEG["Integration tests\n─────────────\nSellerDaoJDBC against a\ntest MySQL schema or Testcontainers"]
+    end
+
+    PROG -.->|"would be replaced/complemented by"| PROPOSED
+
+    style CURRENT fill:#3a1a1a,color:#fff,stroke:#e57373
+    style PROPOSED fill:#1a3a1a,color:#fff,stroke:#4caf50
+```
+
+There is **no automated test framework** in this repository: no JUnit dependency, no `src/test` directory, and no test runner configuration (there is no `pom.xml`/`build.gradle` to declare one in). Quality assurance today is entirely manual, via `Program.main`'s printed output.
+
+### Running the Existing Verification
+
+```bash
+# The only "test" available is running the program itself and reading console output
+java -cp "bin;path/to/mysql-connector-j-8.3.0.jar" application.Program
+```
+
+### Manual Acceptance Checklist
+
+| # | Scenario | Expected result |
+|---|----------|-----------------|
+| 1 | Run `Program.main` against a seeded database | All six `TEST` sections print without an uncaught exception |
+| 2 | `TEST 1` finds seller id `3` | Console prints a `Seller` with a non-null `department` |
+| 3 | `TEST 2` finds sellers of department id `2` | Every printed seller belongs to department `2` |
+| 4 | `TEST 3` lists all sellers | List is alphabetically sorted by name |
+| 5 | `TEST 4` inserts "Greg" | Console prints `Inserted! New id = <positive integer>` |
+| 6 | `TEST 5` renames seller `1` to "Martha Waine" | A subsequent `findById(1)` (outside the script) reflects the new name |
+| 7 | `TEST 6` deletes an existing id | Console prints `Delete Completed!` |
+| 8 | `TEST 6` deletes a non-existent id | A `DbException("Inexistence ID!")` is thrown and printed as a stack trace |
+| 9 | `db.properties` points at an unreachable host | `DB.getConnection()` throws `DbException` with the underlying `SQLException` message |
 
 ---
 
-## 🤝 Contributing
+</details>
 
-> Contributions are very welcome! Follow the steps below to collaborate in an organized way.
+## 📊 Metrics & Monitoring
 
-| Step | Action | Command |
-|:-----:|:-----|:--------|
-| 1️⃣ | **Fork** | Fork the repository to your account. | — |
-| 2️⃣ | **Branch** | Create your feature branch from `main`. | `git checkout -b feature/NewFeature` |
-| 3️⃣ | **Commit** | Save changes with a clear, semantic message. | `git commit -m 'feat: Add NewFeature'` |
-| 4️⃣ | **Push** | Push the branch to the remote repository. | `git push origin feature/NewFeature` |
-| 5️⃣ | **Pull Request** | Open a PR detailing the changes made. | — |
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
 
-<div align="center">
+### Codebase Metrics
 
-<br>
+| Metric | Value |
+|--------|-------|
+| Java source files | 9 |
+| Domain entity classes | 2 (`Seller`, `Department`) |
+| DAO interfaces | 2 (`SellerDao`, `DepartmentDao`) |
+| DAO implementations | 1 (`SellerDaoJDBC`) — `DepartmentDao` has none |
+| Exception classes | 2 (`DbException`, `DbIntegrityException`) |
+| Public DAO methods exercised by `Program` | 6 of 6 declared in `SellerDao` |
+| External runtime dependencies | 1 (MySQL Connector/J) |
+| Module dependencies (`module-info.java`) | 1 (`java.sql`) |
 
-**If this project was useful for your studies, leave a star ⭐️ on the repository!**
+### Runtime Signals
 
-</div>
+| Signal | Source | Where to observe |
+|--------|--------|-------------------|
+| Successful DB connection | `DB.getConnection()` returning without exception | No explicit log — absence of a thrown `DbException` at startup |
+| Query/update success | Return values of `executeQuery`/`executeUpdate` | Console output printed by `Program` after each `TEST` section |
+| Failure | Any `DbException` propagating out of `main` | Uncaught exception stack trace on stderr |
+
+### Useful Diagnostic Commands
+
+```bash
+# Confirm MySQL is listening on the expected port
+mysqladmin -h localhost -P 3306 -u root -p ping
+
+# Inspect the seller/department tables directly
+mysql -u root -p -e "SELECT * FROM coursejdbc.seller;"
+mysql -u root -p -e "SELECT * FROM coursejdbc.department;"
+
+# Watch the JVM's stdout/stderr when running the program
+java -cp "bin;mysql-connector-j-8.3.0.jar" application.Program 2>&1 | tee run.log
+```
+
+### Standardized Exception Behavior
+
+| Situation | Exception thrown | Message |
+|------|----------|---------|
+| Connection or IO failure | `DbException` | Underlying `SQLException`/`IOException` message |
+| `insert()` affects zero rows | `DbException` | `"Unexpected error!No rows affected!"` |
+| `deleteById()` targets a missing id | `DbException` | `"Inexistence ID!"` |
+| Any other `SQLException` in a DAO method | `DbException` | Underlying `SQLException` message |
+| Referential-integrity violation (reserved, not yet thrown) | `DbIntegrityException` | Not yet used in code |
 
 ---
 
-## 👨‍💻 Author
+</details>
 
-<div align="center">
+## ⚠️ Known Limitations
 
-<br>
+<details>
+<summary>▶️ <strong>Click to expand / collapse this section</strong></summary>
 
-**Victor H. J. Santiago**
+> [!IMPORTANT]
+> This project is an educational reference for the DAO pattern over JDBC, not a production application. The limitations below are real gaps observed directly in the source.
 
-<br>
+| Category | Issue | Status |
+|----------|-------|--------|
+| 🗂️ **No `DepartmentDaoJDBC`** | `DepartmentDao` interface exists but has zero implementations, and `DaoFactory` has no `createDepartmentDao()` | ⚠️ Open |
+| ⚠️ **`DbIntegrityException` is dead code** | Declared but never thrown anywhere in `src/` | ⚠️ Open — wire it into `deleteById` for FK-violation `SQLException`s (MySQL error code 1451) |
+| 🔓 **Real-looking credentials committed** | `db.properties` ships with `user=root`, `password=adm2004` | ⚠️ Open — see [Security](#-security) |
+| 🧵 **Connection never closed by `Program`** | `DB.closeConnection()` exists but is never called from `main` | ⚠️ Open — relies on JVM shutdown to release the socket |
+| 🧪 **No automated tests** | No JUnit, no `src/test`, no CI configuration | ⚠️ Open — see [Automated Tests](#-automated-tests) |
+| 🚫 **No input validation on delete-id prompt** | `sc.nextInt()` throws uncaught `InputMismatchException` on non-numeric input | ⚠️ Open |
+| 🏗️ **No build tool (Maven/Gradle)** | Project relies entirely on Eclipse's `.classpath`/`.project` and manual `javac`/`java` invocations | ➕ Intentional — kept minimal for a teaching demo |
+| 📄 **No SQL schema/seed script checked in** | `department`/`seller` table structure must be inferred from the DAO's SQL strings | ⚠️ Open — add a `schema.sql`/`seed.sql` |
+| 🔁 **`update()` does not verify the row exists first** | An update targeting a missing id silently succeeds with 0 rows affected, no exception raised | ⚠️ Open — unlike `deleteById`, `update` does not check `executeUpdate()`'s return value |
+| 🌱 **Duplicated project descriptors** | `classpath.txt`/`project.txt` are stale duplicates of `.classpath`/`.project` (different JDK/library versions) | ➕ Intentional-looking backup, but drifted — worth removing or resyncing |
 
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/VictorHJesusSantiago)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/victor-henrique-de-jesus-santiago/)
+> [!TIP]
+> The single highest-value improvement is implementing `DepartmentDaoJDBC` and wiring `DaoFactory.createDepartmentDao()`, since the interface, the domain entity, and the join queries that already read department data are all in place — only the CRUD implementation itself is missing.
 
-</div>
-
----
-
-## 📄 License
-
-<div align="center">
-
-This project is distributed under the **MIT License**.
-See the [`LICENSE`](./LICENSE) file in the repository for more information.
-
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
+</details>
 
 ---
 
 <div align="center">
 
-*Made with 🗃️ and Java by **Victor H. J. Santiago***
+---
+
+### 🧱 demo_dao_jdbc
+
+*Plain JDBC, plainly explained.*
+
+[![Java](https://img.shields.io/badge/Language-Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![JDBC](https://img.shields.io/badge/Data%20Access-JDBC-4479A1?style=flat-square)]()
+[![MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Pattern](https://img.shields.io/badge/Pattern-DAO%20%2B%20Factory-8B5CF6?style=flat-square)]()
+
+<br/>
+
+```
+"Before the ORM hides the SQL from you,
+ write the DAO by hand once — so you know exactly what it hides."
+```
 
 </div>
